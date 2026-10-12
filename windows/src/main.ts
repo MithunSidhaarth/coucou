@@ -12,6 +12,7 @@ import { applySpotify, registerSpotifyHandlers } from "./island/spotify";
 import { registerLiveHandlers } from "./island/live";
 import { registerExtras } from "./views/extras";
 import { registerVoice } from "./voice/voice";
+import { setMochiFace } from "./voice/eleven";
 import { isMusicPill } from "./core/spotify";
 import { Recap } from "./recap/recap";
 import { onLanguageChange, resolveLanguage, setLanguage, systemLanguages } from "./i18n/i18n";
@@ -108,6 +109,12 @@ async function main() {
   registerLiveHandlers(liveHost);
   registerExtras(liveHost);
   registerVoice({ ...liveHost, alert: (v) => island.alert(v) });
+  setMochiFace({
+    mood: (m) => island.voiceMood(m),
+    pulse: (level, user) => island.voicePulse(level, user),
+    emote: (e) => island.emote(e),
+    eye: (e) => island.voiceEye(e),
+  });
   // Rust may have read Spotify before this page listened: ask once.
   if (State.settings.activeIntegrations.some(isMusicPill)) {
     void Bridge.spotifyRefresh().then((s) => s && applySpotify(island, s));
